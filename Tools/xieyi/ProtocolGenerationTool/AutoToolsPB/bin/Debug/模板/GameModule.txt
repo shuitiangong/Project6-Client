@@ -1,0 +1,39 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ProtoMsg;
+using MobaServer.Entity;
+
+namespace MobaServer
+{
+    class xxx : GameModuleBase<xxx>
+    {
+        public override void Init()
+        {
+            base.Init();
+        }
+
+        public override void Release()
+        {
+            base.Release();
+        }
+
+        public override void AddListener()
+        {
+            base.AddListener();
+            //添加监听
+        }
+
+        public override void RemoveListener()
+        {
+            base.RemoveListener();
+            //移除监听
+        }
+
+        //实现的监听
+
+
+    }
+}

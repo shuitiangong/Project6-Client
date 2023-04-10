@@ -1,0 +1,208 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using GameServer.Database.Mysql;
+using ProtoMsg;
+using GameServer.GameModule;
+using GameServer.ServerData;
+using GameServer.Database;
+
+
+public class DBclassname : DBBase<DBclassname>
+{
+    //查询 根据ID -> 条件  查询后返回一个类 Single
+    public classname Select(string sqlStr)
+    {
+        classname classname = new classname();
+        //查的表明一定是类的名称
+        using (MySqlCommand cmd = new MySqlCommand(MySqlCommandType.SELECT))
+        {
+            cmd.Select("dbname").Custom(sqlStr);
+
+            using (MySqlReader r = new MySqlReader(cmd, "dbconnection"))
+            {
+                if (!r.Read())
+                {
+                    return null;
+                }
+                else
+                {
+
+                    //遍历每一行表格 
+                    //"classname"."字段名称" = r.Read"数据类型("字段名称")";
+                }
+            }
+        }
+        return classname;
+    }
+
+    //查询 根据ID -> 条件  查询后返回一个类 Single
+    public List<classname> SelectList(string sqlStr)
+    {
+        List<classname> classnameList = new List<classname>();
+        //查的表明一定是类的名称
+        using (MySqlCommand cmd = new MySqlCommand(MySqlCommandType.SELECT))
+        {
+            cmd.Select("dbname").Custom(sqlStr);
+
+            using (MySqlReader r = new MySqlReader(cmd, "dbconnection"))
+            {
+                if (r.NumberOfRows==0)
+                {
+                    return null;
+                }
+
+
+                while (r.Read())
+                {
+                    classname classname = new classname();
+
+                    //遍历每一行表格 
+                    //"classname"."字段名称" = r.Read"数据类型("字段名称")";
+
+                    classnameList.Add(classname);
+                }
+            }
+        }
+        return classnameList;
+    }
+
+    //查询 根据ID -> 条件  查询后返回一个类 Single
+    public int SelectCount(string sqlStr)
+    {
+        //查的表明一定是类的名称
+        using (MySqlCommand cmd = new MySqlCommand(MySqlCommandType.SELECT))
+        {
+            cmd.Select("dbname").Custom(sqlStr);
+
+            using (MySqlReader r = new MySqlReader(cmd, "dbconnection"))
+            {
+                return r.NumberOfRows;
+            }
+        }
+    }
+
+
+
+    //删除-key 根据条件删除 
+    public bool Delete(string sqlStr)
+    {
+        //查的表明一定是类的名称
+        using (MySqlCommand cmd = new MySqlCommand(MySqlCommandType.SELECT))
+        {
+            cmd.Select("dbname").Custom(sqlStr);
+
+            using (MySqlReader r = new MySqlReader(cmd, "dbconnection"))
+            {
+                if (r.NumberOfRows==0)
+                {
+                    return false;
+                }
+                else
+                {
+                    using (MySqlCommand deleteCmd = new MySqlCommand(MySqlCommandType.DELETE))
+                    {
+                        var v = deleteCmd.DeleteCmd("dbname").Custom(sqlStr);
+                        //执行命令
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    //插入->添加的是一整条的数据  如果有主键  先判断主键是否存在了 返回插入结果 isSingle是否保持唯一性
+    public bool Insert(string selectSql, classname classname, bool isSingle)
+    {
+        bool isInsert = false;
+        using (MySqlCommand cmd = new MySqlCommand(MySqlCommandType.SELECT))
+        {
+            if (selectSql != "")
+            {
+                cmd.Select("dbname").Custom(selectSql);//查询主键
+            }
+
+            using (MySqlReader r = new MySqlReader(cmd, "dbconnection"))
+            {
+                if (isSingle == true)
+                {
+                    if (r.NumberOfRows==0)
+                    {
+                        isInsert = true;
+                    }
+                    else
+                    {
+                        isInsert = false;
+                    }
+                }
+                else
+                {
+                    isInsert = true;
+                }
+
+                if (isInsert == true)
+                {
+                    using (MySqlCommand insertCmd = new MySqlCommand(MySqlCommandType.INSERT))
+                    {
+                        var v = insertCmd.Insert("dbname");
+                        //插入所有字段
+                        //v = v.Insert("字段名称", "classname"."字段名称");
+
+                        //执行命令
+                    }
+                }
+                return isInsert;
+            }
+        }
+    }
+
+    //插入并且检验是否插入成功
+    public classname Insert(classname classname, string selectStr)
+    {
+        using (MySqlCommand insertCmd = new MySqlCommand(MySqlCommandType.INSERT))
+        {
+            var v = insertCmd.Insert("dbname");
+            //插入所有字段
+            //v = v.Insert("字段名称", "classname"."字段名称");
+
+            //执行命令
+        }
+        return Select(selectStr);
+    }
+
+    //改 先进行查询 然后再进行修改  返回更新结果
+    public bool Update(string sqlStr, string updateSql)
+    {
+        //查询的时候 先确定调用哪个 做条件判断的时
+        using (MySqlCommand cmd = new MySqlCommand(MySqlCommandType.SELECT))
+        {
+            if (sqlStr != "")
+            {
+                cmd.Select("dbname").Custom(sqlStr);//查询主键
+            }
+
+            using (MySqlReader r = new MySqlReader(cmd, "dbconnection"))
+            {
+                if (r.Read())
+                {
+                    using (MySqlCommand updateCmd = new MySqlCommand(MySqlCommandType.UPDATE))
+                    {
+
+                        //进行更新
+                        var v = updateCmd.Update("dbname").Custom(updateSql);
+
+                        //执行命令
+                    }
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+    }
+
+}
